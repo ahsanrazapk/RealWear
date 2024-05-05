@@ -5,11 +5,18 @@ import 'package:wfveflutterexample/model/stepmodel.dart';
 import 'package:wfveflutterexample/view/widgets/expansion_tile_card.dart';
 import 'package:wfveflutterexample/view/sub_step_item.dart';
 
-class StepItem extends StatelessWidget {
+class StepItem extends StatefulWidget {
 
  final StepListModel stepListModel;
    const StepItem({super.key, required this.stepListModel});
 
+  @override
+  State<StepItem> createState() => _StepItemState();
+}
+
+class _StepItemState extends State<StepItem> with SingleTickerProviderStateMixin {
+  int currentTab = -1;
+  late TabController tabController = TabController(length: 10, vsync: this);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,9 +27,9 @@ class StepItem extends StatelessWidget {
         initialElevation: 4.0,
         elevation: 4.0,
         shadowColor: ColorManager.step,
-        key: stepListModel.parent.parent,
-        leading:   CircleAvatar(backgroundColor: ColorManager.subStep,child: Text(stepListModel.parent.number)),
-        title:   Text(stepListModel.parent.title),
+        key: widget.stepListModel.parent.parent,
+        leading:   CircleAvatar(backgroundColor: ColorManager.subStep,child: Text(widget.stepListModel.parent.number)),
+        title:   Text(widget.stepListModel.parent.title),
         subtitle: const Text('Running'),
         children: <Widget>[
           const Divider(
@@ -36,17 +43,33 @@ class StepItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back_ios),),
-                SingleChildScrollView(scrollDirection: Axis.horizontal,child: Row(children: [
-                  IconButton(onPressed: (){}, icon: Icon(Icons.input),),
-
-                ],),),
+                Expanded(
+                    child: TabBar(
+                      isScrollable: true,
+                      unselectedLabelColor: ColorManager.white,
+                      labelColor: ColorManager.secondary,
+                      onTap: (tab){
+                        setState(() {
+                          currentTab = tab;
+                        });
+                      },
+                      tabs: List.generate(
+                          10,
+                              (index) => const Tab(
+                              icon: Icon(Icons.input)
+                          )),
+                      padding: EdgeInsets.zero,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      tabAlignment: TabAlignment.start,
+                      controller: tabController,
+                    )),
                 IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios),),
 
               ],
             ),
             ),
           ),
-          ...stepListModel.child.map((e) => SubStepItem(stepModel: e))
+          ...widget.stepListModel.child.map((e) => SubStepItem(stepModel: e))
 
         ],
       ),
