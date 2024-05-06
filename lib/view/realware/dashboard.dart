@@ -39,7 +39,8 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
                         maximumRecordingDuration: const Duration(seconds: 15),
                         question: '',
                       ),
-                      const InputTag()
+                      const InputTag(),
+                      Container(),
                     ][childIndex]
                   : Container(),
             )
