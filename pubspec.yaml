@@ -41,6 +41,10 @@ dependencies:
   device_info_plus: ^10.1.0
   stack_trace: ^1.11.1
   flutter_svg: ^2.0.10+1
+  speech_to_text: ^6.6.1
+  camera: ^0.10.5+9
+  video_player: ^2.8.6
+
 
 dev_dependencies:
   flutter_test:

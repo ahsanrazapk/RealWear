@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,13 +5,12 @@ import 'package:wfveflutterexample/application/app_theme/app_themes.dart';
 import 'package:wfveflutterexample/application/app_theme/color_scheme.dart';
 import 'package:wfveflutterexample/application/core/extensions/extensions.dart';
 import 'package:wfveflutterexample/application/main_config.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:wfveflutterexample/application/routes/route_generator.dart';
 import 'package:wfveflutterexample/base/base_widget.dart';
 import 'package:wfveflutterexample/common/verification_type.dart';
 
 void setPreferredOrientations(PlatformType platformType) {
-  if (platformType == PlatformType.realwear) {
+  if (platformType == PlatformType.android) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
     SystemChrome.setPreferredOrientations([
@@ -53,7 +50,7 @@ class MyApp extends BaseStateLessWidget {
             theme: lightTheme,
             debugShowCheckedModeBanner: false,
             initialRoute: RouteManager.rInitial,
-            onGenerateRoute: platformType == PlatformType.realwear ? RouteGenerator.generateRouteRealware : RouteGenerator.generateRoute,
+            onGenerateRoute: platformType == PlatformType.android ? RouteGenerator.generateRouteRealware : RouteGenerator.generateRoute,
             navigatorKey: navigator.key())
         .onTap(onTap: () {
       FocusManager.instance.primaryFocus?.unfocus();
