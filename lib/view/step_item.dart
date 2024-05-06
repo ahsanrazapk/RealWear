@@ -42,7 +42,15 @@ class _StepItemState extends State<StepItem> with SingleTickerProviderStateMixin
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back_ios),),
+                IconButton(
+                  onPressed: () {
+                    if(currentTab>0){
+                      currentTab--;
+                      tabController.animateTo(currentTab, duration: Duration(milliseconds: 250),curve: Curves.easeIn );
+                    }
+                  },
+                  icon: Icon(Icons.arrow_back_ios),
+                ),
                 Expanded(
                     child: TabBar(
                       isScrollable: true,
@@ -63,8 +71,15 @@ class _StepItemState extends State<StepItem> with SingleTickerProviderStateMixin
                       tabAlignment: TabAlignment.start,
                       controller: tabController,
                     )),
-                IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios),),
-
+                IconButton(
+                  onPressed: () {
+                    if(currentTab < tabController.length-1){
+                      currentTab++;
+                      tabController.animateTo(currentTab, duration: Duration(milliseconds: 250),curve: Curves.easeIn );
+                    }
+                  },
+                  icon: Icon(Icons.arrow_forward_ios),
+                ),
               ],
             ),
             ),
