@@ -33,7 +33,7 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
             const VerticalDivider(thickness: 1, width: 1),
             // This is the main content.
             Expanded(
-              child: isParent
+              child: !isParent
                   ? [
                       CameraPicker(
                         maximumRecordingDuration: const Duration(seconds: 15),

@@ -61,12 +61,7 @@ class InputTagState extends State<InputTag> {
               child: Container(
                 padding: EdgeInsets.all(16),
                 child: Text(
-                  // If listening is active show the recognized words
-                  _speechToText.isListening
-                      ? '$_lastWords'
-                      : _speechEnabled
-                      ? 'Tap the microphone to start listening...'
-                      : 'Speech not available',
+                       _lastWords ?? '',
                 ),
               ),
             ),

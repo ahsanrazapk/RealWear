@@ -10,7 +10,7 @@ import 'package:wfveflutterexample/base/base_widget.dart';
 import 'package:wfveflutterexample/common/verification_type.dart';
 
 void setPreferredOrientations(PlatformType platformType) {
-  if (platformType == PlatformType.realwear) {
+  if (platformType == PlatformType.android) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
     SystemChrome.setPreferredOrientations([
@@ -50,7 +50,7 @@ class MyApp extends BaseStateLessWidget {
             theme: lightTheme,
             debugShowCheckedModeBanner: false,
             initialRoute: RouteManager.rInitial,
-            onGenerateRoute: platformType == PlatformType.realwear ? RouteGenerator.generateRouteRealware : RouteGenerator.generateRoute,
+            onGenerateRoute: platformType == PlatformType.android ? RouteGenerator.generateRouteRealware : RouteGenerator.generateRoute,
             navigatorKey: navigator.key())
         .onTap(onTap: () {
       FocusManager.instance.primaryFocus?.unfocus();

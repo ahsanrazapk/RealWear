@@ -17,22 +17,26 @@ typedef EntitySaveCallback = FutureOr<dynamic> Function({
 
 class CameraPickerViewer extends StatefulWidget {
   const CameraPickerViewer({
-    Key? key,
-     this.pickerState,
+    super.key,
+    this.pickerState,
     required this.pickerType,
     required this.previewXFile,
+    required this.turns,
     this.shouldDeletePreviewFile = false,
-  }) : super(key: key);
+
+  });
 
   final CameraPickerState? pickerState;
   final CameraPickerViewType pickerType;
   final File previewXFile;
   final bool shouldDeletePreviewFile;
+  final int turns;
   static Future<dynamic> pushToViewer(
     BuildContext context, {
-     CameraPickerState? pickerState,
+    CameraPickerState? pickerState,
     required CameraPickerViewType pickerType,
     required File previewXFile,
+    required int turns,
     bool shouldDeletePreviewFile = false,
   }) {
     return Navigator.of(context).push<dynamic>(
@@ -41,6 +45,7 @@ class CameraPickerViewer extends StatefulWidget {
           pickerState: pickerState,
           pickerType: pickerType,
           previewXFile: previewXFile,
+          turns: turns,
           shouldDeletePreviewFile: shouldDeletePreviewFile,
         ),
         transitionsBuilder: (
@@ -114,7 +119,6 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
     }
   }
 
-
   Widget get previewRetryButton {
     return InkWell(
       onTap: () {
@@ -127,10 +131,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
         margin: const EdgeInsets.all(10.0),
         child: const Text(
           "Retry",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600),
+          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -140,7 +141,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
     return Semantics(
       label: 'hf_no_number:|hf_commands:back|',
       button: true,
-      onTap: (){
+      onTap: () {
         if (previewFile.existsSync()) {
           previewFile.delete();
         }
@@ -173,7 +174,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
     return Semantics(
       label: 'hf_no_number:|hf_commands:save|',
       button: true,
-      onTap: (){
+      onTap: () {
         if (previewFile.existsSync()) {
           previewFile.delete();
         }
@@ -186,7 +187,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(9999),
         ),
-        onPressed: (){
+        onPressed: () {
           Navigator.of(context).pop(false);
         },
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -206,7 +207,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
     return ValueListenableBuilder<bool>(
       valueListenable: isPlaying,
       builder: (_, bool value, Widget? child) => Semantics(
-        label: value ? 'hf_no_number:|hf_commands:pause|':'hf_no_number:|hf_commands:play|',
+        label: value ? 'hf_no_number:|hf_commands:pause|' : 'hf_no_number:|hf_commands:play|',
         button: true,
         onTap: playButtonCallback,
         child: GestureDetector(
@@ -271,7 +272,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
                 children: <Widget>[
                   switchSoundButton(videoController?.value.volume),
                   previewConfirmButton,
-                  Opacity(opacity: 0,child: downloadButton())
+                  Opacity(opacity: 0, child: downloadButton())
                 ],
               ),
             ),
@@ -290,9 +291,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
     }
     return IconButton(
       onPressed: () {
-        (videoController?.value.volume ?? 0.0) > 0.0
-            ? videoController?.setVolume(0.0)
-            : videoController?.setVolume(1.0);
+        (videoController?.value.volume ?? 0.0) > 0.0 ? videoController?.setVolume(0.0) : videoController?.setVolume(1.0);
         setState(() {});
       },
       icon: Icon(
@@ -334,7 +333,8 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
           if (pickerType == CameraPickerViewType.image)
             Positioned.fill(child: Image.file(previewFile))
           else if (pickerType == CameraPickerViewType.video)
-            Positioned.fill(
+            RotatedBox(
+              quarterTurns: widget.turns,
               child: Center(
                 child: AspectRatio(
                   aspectRatio: videoController?.value.aspectRatio ?? 0,

@@ -6,9 +6,6 @@ import 'package:camera/camera.dart';
 import 'package:wfveflutterexample/application/app_theme/color_scheme.dart';
 import 'package:wfveflutterexample/application/core/extensions/extensions.dart';
 import 'package:wfveflutterexample/base/base_widget.dart';
-import 'package:wfveflutterexample/constants/SVGManager.dart';
-import 'package:wfveflutterexample/constants/asset_manager.dart';
-import 'package:wfveflutterexample/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -49,8 +46,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   CameraController? get controller => _controllerNotifier.value;
   List<CameraDescription>? cameras;
   final ValueNotifier<double> _currentExposureOffset = ValueNotifier<double>(0);
-  final bool _shouldLockPortrait = false;
-  final int _cameraQuarterTurns = 0;
+   int _cameraQuarterTurns = 0;
   final bool _enableSetExposure = true;
   final bool _enableExposureControlOnPoint = true;
   final bool _enablePinchToZoom = true;
@@ -71,7 +67,10 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
 
   int get cameraQuarterTurns => _cameraQuarterTurns;
 
-  bool get shouldLockPortrait => _shouldLockPortrait;
+
+  set cameraQuarterTurns(int value) {
+    _cameraQuarterTurns = value;
+  }
 
   bool get enableRecording => widget.enableRecording;
 
@@ -97,16 +96,6 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   @override
   void initState() {
     super.initState();
-    if (shouldLockPortrait) {
-      SystemChrome.setPreferredOrientations(<DeviceOrientation>[
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-    }
-    WidgetsBinding.instance.removeObserver(this);
-    if (!Platform.isAndroid) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: <SystemUiOverlay>[]);
-    }
     if (mounted) {
       initCameras();
     }
@@ -115,12 +104,6 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   @override
   Future<void> dispose() async {
     super.dispose();
-    if (shouldLockPortrait) {
-      SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    }
-    if (!Platform.isAndroid) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
-    }
     WidgetsBinding.instance.removeObserver(this);
     controller?.dispose();
     _controllerNotifier.dispose();
@@ -149,40 +132,28 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
     DeviceOrientation orientation,
     BoxConstraints constraints,
   ) {
-    int turns = -cameraQuarterTurns;
-    if (!shouldLockPortrait) {
-      return turns;
-    }
+    int turns = 1;
     switch (orientation) {
       case DeviceOrientation.landscapeLeft:
-        turns += -1;
+        turns = 4;
         break;
       case DeviceOrientation.landscapeRight:
-        turns += 1;
+        turns = 3;
         break;
       case DeviceOrientation.portraitDown:
-        turns += 2;
+        turns = 2;
         break;
       default:
+        turns = 1;
         break;
     }
+    cameraQuarterTurns = turns;
     return turns;
   }
 
-  _PreviewScaleType _effectiveScaleType(BoxConstraints constraints) {
-    final Size? _size = controller?.value.previewSize;
-    final Size _scaledSize = (_size ?? Size.zero) * constraints.maxWidth * context.scale / (_size?.height ?? 0.0);
-    if (_scaledSize.width > constraints.maxHeight * context.scale) {
-      return _PreviewScaleType.width;
-    } else if (_scaledSize.width < constraints.maxHeight * context.scale) {
-      return _PreviewScaleType.height;
-    } else {
-      return _PreviewScaleType.none;
-    }
-  }
 
   void initCameras([CameraDescription? cameraDescription]) {
-    final CameraController? _c = _controllerNotifier.value;
+    final CameraController? c = _controllerNotifier.value;
 
     setState(() {
       _maxAvailableZoom = 1;
@@ -198,7 +169,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       }
     });
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      await _c?.dispose();
+      await c?.dispose();
       if (cameraDescription == null) {
         cameras = await availableCameras();
       }
@@ -384,6 +355,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
           context,
           pickerState: this,
           pickerType: CameraPickerViewType.image,
+          turns: _cameraQuarterTurns,
           previewXFile: File((await controller!.takePicture()).path),
           shouldDeletePreviewFile: shouldDeletePreviewFile,
         );
@@ -455,6 +427,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
         final dynamic entity = await CameraPickerViewer.pushToViewer(
           context,
           pickerState: this,
+          turns: _cameraQuarterTurns,
           pickerType: CameraPickerViewType.video,
           previewXFile: File(xFile.path),
           shouldDeletePreviewFile: shouldDeletePreviewFile,
@@ -569,13 +542,13 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              IconButton(
+             /* IconButton(
                 onPressed: () {},
                 icon: const Icon(
                   Icons.clear,
                   color: Colors.white,
                 ),
-              ),
+              ),*/
             ],
           ),
         ),
@@ -590,7 +563,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       label: 'hf_no_number:|hf_commands:record|hf_commands:record video|',
       button: true,
       onTap: () {
-        if(enableRecording){
+        if (enableRecording) {
           recordDetection(constraints);
         }
       },
@@ -844,50 +817,11 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       ),
     );
 
-    final _PreviewScaleType scale = _effectiveScaleType(constraints);
-    if (scale == _PreviewScaleType.none) {
-      return _preview;
-    }
-
-    double _width;
-    double _height;
-    switch (scale) {
-      case _PreviewScaleType.width:
-        _width = constraints.maxWidth;
-        if (constraints.maxWidth <= constraints.maxHeight) {
-          _height = constraints.maxWidth * (controller?.value.aspectRatio ?? 0.0);
-        } else {
-          _height = constraints.maxWidth / (controller?.value.aspectRatio ?? 0.0);
-        }
-        break;
-      case _PreviewScaleType.height:
-        _width = constraints.maxHeight / (controller?.value.aspectRatio ?? 0.0);
-        _height = constraints.maxHeight;
-        break;
-      default:
-        _width = constraints.maxWidth;
-        _height = constraints.maxHeight;
-        break;
-    }
-    final double _offsetHorizontal = (_width - constraints.maxWidth).abs() / -3;
-    final double _offsetVertical = (_height - constraints.maxHeight).abs() / -3;
-    if (shouldLockPortrait) {
       _preview = RotatedBox(
         quarterTurns: _previewQuarterTurns(orientation, constraints),
         child: _preview,
       );
-    }
-    _preview = Stack(
-      children: <Widget>[
-        Positioned(
-          left: _offsetHorizontal,
-          right: _offsetHorizontal,
-          top: _offsetVertical,
-          bottom: _offsetVertical,
-          child: _preview,
-        ),
-      ],
-    );
+
     return _preview;
   }
 
@@ -966,35 +900,32 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
         value: SystemUiOverlayStyle.light,
         child: Material(
           color: Colors.black,
-          child: RotatedBox(
-            quarterTurns: cameraQuarterTurns,
-            child: LayoutBuilder(
-              builder: (BuildContext c, BoxConstraints constraints) {
-                return Stack(
-                  fit: StackFit.expand,
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    _initializeWrapper(
-                      builder: (CameraValue value, __) {
-                        if (value.isInitialized) {
-                          return _cameraBuilder(
-                            context: c,
-                            value: value,
-                            constraints: constraints,
-                          );
-                        }
-                        return const SizedBox.expand();
-                      },
-                    ),
-                    if (enableSetExposure) _exposureDetectorWidget(c, constraints),
-                    _initializeWrapper(
-                      builder: (_, __) => _focusingAreaWidget(constraints),
-                    ),
-                    _contentBuilder(constraints),
-                  ],
-                );
-              },
-            ),
+          child: LayoutBuilder(
+            builder: (BuildContext c, BoxConstraints constraints) {
+              return Stack(
+                fit: StackFit.expand,
+                alignment: Alignment.center,
+                children: <Widget>[
+                  _initializeWrapper(
+                    builder: (CameraValue value, __) {
+                      if (value.isInitialized) {
+                        return _cameraBuilder(
+                          context: c,
+                          value: value,
+                          constraints: constraints,
+                        );
+                      }
+                      return const SizedBox.expand();
+                    },
+                  ),
+                  if (enableSetExposure) _exposureDetectorWidget(c, constraints),
+                  _initializeWrapper(
+                    builder: (_, __) => _focusingAreaWidget(constraints),
+                  ),
+                  _contentBuilder(constraints),
+                ],
+              );
+            },
           ),
         ),
       );
