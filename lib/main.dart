@@ -9,6 +9,7 @@ import 'package:wfveflutterexample/application/main_config.dart';
 import 'package:wfveflutterexample/application/routes/route_generator.dart';
 import 'package:wfveflutterexample/base/base_widget.dart';
 import 'package:wfveflutterexample/common/verification_type.dart';
+late PlatformType platformType;
 
 void setPreferredOrientations(PlatformType platformType) {
   if (platformType == PlatformType.realwear) {
@@ -27,13 +28,12 @@ void setPreferredOrientations(PlatformType platformType) {
     }
   }
 }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark
       .copyWith(statusBarColor: ColorManager.bg, statusBarIconBrightness: Brightness.dark, statusBarBrightness: Brightness.dark));
   await initMainServiceLocator();
-  PlatformType platformType = await getPlatformType();
+  platformType = await getPlatformType();
   setPreferredOrientations(platformType);
   runApp(MyApp(
     platformType: platformType,

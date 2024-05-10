@@ -9,6 +9,8 @@ import 'package:wfveflutterexample/application/core/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:wfveflutterexample/common/verification_type.dart';
+import 'package:wfveflutterexample/main.dart';
 import 'camera_picker_viewer.dart';
 import 'circular_progress_bar.dart';
 import 'exposure_point_widget.dart';
@@ -129,7 +131,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       cameraQuarterTurns = orientation.index + 1;
       return cameraQuarterTurns;
     } else if (orientation == DeviceOrientation.landscapeLeft) {
-      cameraQuarterTurns = orientation.index - 1;
+      cameraQuarterTurns = platformType == PlatformType.realwear ? orientation.index + 3 : orientation.index - 1;
       return cameraQuarterTurns;
     }
     cameraQuarterTurns = orientation.index;
@@ -515,9 +517,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       child: Container(
         color: controller.value.isRecordingVideo ? Colors.transparent : Colors.black.withOpacity(0.2),
         child: Row(
-          children: <Widget>[
-            backButton(context, constraints)
-          ],
+          children: <Widget>[backButton(context, constraints)],
         ),
       ),
     );
@@ -551,17 +551,17 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       button: true,
       customSemanticsActions: {
         const CustomSemanticsAction(label: 'hf_no_number:|hf_commands:record|hf_commands:record video|'): () {
-          if(!isShootingButtonAnimate) {
+          if (!isShootingButtonAnimate) {
             recordDetection(constraints);
           }
         },
         const CustomSemanticsAction(label: 'hf_no_number:|hf_commands:capture|hf_commands:capture image|'): () {
-          if(!isShootingButtonAnimate) {
+          if (!isShootingButtonAnimate) {
             takePicture();
           }
         },
         const CustomSemanticsAction(label: 'hf_no_number:|hf_commands:stop|hf_commands:stop recording|'): () {
-          if(isShootingButtonAnimate) {
+          if (isShootingButtonAnimate) {
             recordDetectionCancel(constraints);
           }
         }
@@ -576,13 +576,14 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
         onPointerMove: enablePullToZoomInRecord ? (PointerMoveEvent e) => onShootingButtonMove(e, constraints) : null,
         child: InkWell(
           borderRadius: const BorderRadius.all(Radius.circular(999999)),
-          onTap: ()=> isShootingButtonAnimate ? recordDetectionCancel(constraints): takePicture(),
-          onLongPress: enableRecording ? () {
-            if(!isShootingButtonAnimate){
-              recordDetection(constraints);
-            }
-
-          } : null,
+          onTap: () => isShootingButtonAnimate ? recordDetectionCancel(constraints) : takePicture(),
+          onLongPress: enableRecording
+              ? () {
+                  if (!isShootingButtonAnimate) {
+                    recordDetection(constraints);
+                  }
+                }
+              : null,
           child: SizedBox.fromSize(
             size: outerSize,
             child: Stack(
