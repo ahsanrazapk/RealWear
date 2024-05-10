@@ -934,15 +934,15 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
         value: SystemUiOverlayStyle.light,
         child: Material(
           color: Colors.black,
-          child: RotatedBox(
-            quarterTurns: _previewQuarterTurns(value.deviceOrientation),
-            child: LayoutBuilder(
-              builder: (BuildContext c, BoxConstraints constraints) {
-                return Stack(
-                  fit: StackFit.expand,
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Builder(
+          child: LayoutBuilder(
+            builder: (BuildContext c, BoxConstraints constraints) {
+              return Stack(
+                fit: StackFit.expand,
+                alignment: Alignment.center,
+                children: <Widget>[
+                  RotatedBox(
+                    quarterTurns: _previewQuarterTurns(value.deviceOrientation),
+                    child: Builder(
                       builder: (con) {
                         if (value.isInitialized) {
                           return _cameraBuilder(
@@ -954,15 +954,15 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
                         return const SizedBox.expand();
                       },
                     ),
-                    if (enableSetExposure) _exposureDetectorWidget(c, constraints),
-                    _initializeWrapper(
-                      builder: (_, __) => _focusingAreaWidget(constraints),
-                    ),
-                    _contentBuilder(constraints),
-                  ],
-                );
-              },
-            ),
+                  ),
+                  if (enableSetExposure) _exposureDetectorWidget(c, constraints),
+                  _initializeWrapper(
+                    builder: (_, __) => _focusingAreaWidget(constraints),
+                  ),
+                  _contentBuilder(constraints),
+                ],
+              );
+            },
           ),
         ),
       );
