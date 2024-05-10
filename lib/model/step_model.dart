@@ -7,13 +7,9 @@ class StepModel {
 
   String number;
 
-  StepModel({required this.parent, required this.title, required this.number});
+  List<StepModel>? child;
+
+  StepModel({required this.parent, required this.title, required this.number, this.child});
 }
 
-class StepListModel {
-  StepModel parent;
-  List<StepModel> child;
 
-  StepListModel({required this.parent, required this.child});
-
-}

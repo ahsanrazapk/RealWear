@@ -22,7 +22,7 @@ class _GradientCircularProgressIndicatorState extends State<GradientCircularProg
 
   @override
   void initState() {
-    _animationController.addListener(() => setState(() {}));
+   // _animationController.addListener(() => setState(() {}));
     _animationController.repeat();
     super.initState();
   }
@@ -38,6 +38,12 @@ class _GradientCircularProgressIndicatorState extends State<GradientCircularProg
           strokeWidth: widget.strokeWidth,),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
+import '../application/app_theme/color_scheme.dart';
+
 class InputTag extends StatefulWidget {
   const InputTag({Key? key}) : super(key: key);
 
@@ -46,26 +48,33 @@ class InputTagState extends State<InputTag> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(16),
-              child: const Text(
-                'Recognized words:',
-                style: TextStyle(fontSize: 20.0),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Row(
+                children: [
+                  BackButton(color: ColorManager.white,),
+                ],
               ),
-            ),
-            Expanded(
-              child: Container(
+              Container(
                 padding: EdgeInsets.all(16),
-                child: Text(
-                       _lastWords ?? '',
+                child: const Text(
+                  'Recognized words:',
+                  style: TextStyle(fontSize: 20.0),
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                         _lastWords,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Semantics(

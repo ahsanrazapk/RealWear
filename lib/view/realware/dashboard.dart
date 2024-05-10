@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wfveflutterexample/application/app_theme/color_scheme.dart';
 import 'package:wfveflutterexample/application/core/extensions/extensions.dart';
-import 'package:wfveflutterexample/services/input_tag.dart';
+import 'package:wfveflutterexample/view/input_tag.dart';
 import 'package:wfveflutterexample/view/widgets/camera/camera_picker.dart';
+import 'package:wfveflutterexample/view/widgets/webview.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -35,12 +36,11 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
             Expanded(
               child: !isParent
                   ? [
-                      CameraPicker(
-                        maximumRecordingDuration: const Duration(seconds: 15),
-                        question: '',
+                      const CameraPicker(
+                        maximumRecordingDuration: Duration(seconds: 15),
                       ),
                       const InputTag(),
-                      Container(),
+                      const WebView(),
                     ][childIndex]
                   : Container(),
             )
@@ -209,12 +209,6 @@ class SidebarState extends State<Sidebar> {
     } else {
       _scrollToElement(tabs[_selectedIndex].globalKey, false);
     }
-    if (_childSelectedIndex != -1) {
-      widget.onItemSelected(false, _selectedIndex, _childSelectedIndex);
-    } else {
-      widget.onItemSelected(true, _selectedIndex, null);
-    }
-
     if (_childSelectedIndex != -1) {
       widget.onItemSelected(false, _selectedIndex, _childSelectedIndex);
     } else {

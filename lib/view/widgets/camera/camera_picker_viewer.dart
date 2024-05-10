@@ -334,7 +334,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
             Positioned.fill(child: Image.file(previewFile))
           else if (pickerType == CameraPickerViewType.video)
             RotatedBox(
-              quarterTurns: widget.turns,
+              quarterTurns: widget.turns,//widget.turns,
               child: Center(
                 child: AspectRatio(
                   aspectRatio: videoController?.value.aspectRatio ?? 0,

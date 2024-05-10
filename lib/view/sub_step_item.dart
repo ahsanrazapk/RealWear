@@ -2,10 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wfveflutterexample/application/app_theme/color_scheme.dart';
 import 'package:wfveflutterexample/application/core/extensions/extensions.dart';
-import 'package:wfveflutterexample/model/stepmodel.dart';
+import 'package:wfveflutterexample/base/base_widget.dart';
+import 'package:wfveflutterexample/model/step_model.dart';
+import 'package:wfveflutterexample/view/input_tag.dart';
+import 'package:wfveflutterexample/view/widgets/camera/camera_picker.dart';
 import 'package:wfveflutterexample/view/widgets/expansion_tile_card.dart';
+import 'package:wfveflutterexample/view/widgets/webview.dart';
 
-class SubStepItem extends StatefulWidget {
+class SubStepItem extends BaseStateFullWidget {
   final StepModel stepModel;
   SubStepItem({super.key, required this.stepModel});
 
@@ -15,7 +19,8 @@ class SubStepItem extends StatefulWidget {
 
 class _SubStepItemState extends State<SubStepItem> with SingleTickerProviderStateMixin {
   int currentTab = -1;
-  late TabController tabController = TabController(length: 10, vsync: this);
+  late TabController tabController = TabController(length: 2, vsync: this);
+  List<IconData> icon = [Icons.input, Icons.video_library_sharp];
 
   @override
   Widget build(BuildContext context) {
@@ -48,28 +53,37 @@ class _SubStepItemState extends State<SubStepItem> with SingleTickerProviderStat
                 children: [
                   IconButton(
                     onPressed: () {
-                      if(currentTab>0){
-                        currentTab--;
-                        tabController.animateTo(currentTab, duration: Duration(milliseconds: 250),curve: Curves.easeIn );
+                      if (currentTab > 0) {
+                        --currentTab;
+                        tabController.animateTo(currentTab, duration: Duration(milliseconds: 250), curve: Curves.easeIn);
                       }
                     },
                     icon: Icon(Icons.arrow_back_ios),
                   ),
                   Expanded(
                       child: TabBar(
-                        isScrollable: true,
+                    isScrollable: true,
                     unselectedLabelColor: ColorManager.white,
                     labelColor: ColorManager.secondary,
-                    onTap: (tab){
-                          setState(() {
-                            currentTab = tab;
-                          });
+                    onTap: (tab) {
+                      setState(() {
+                        currentTab = tab;
+                      });
                     },
                     tabs: List.generate(
-                        10,
-                        (index) => const Tab(
-                              icon: Icon(Icons.input)
-                            )),
+                        2,
+                        (index) => Tab(
+                            icon: IconButton(
+                                onPressed: () {
+                                  if (currentTab == 0) {
+                                    widget.navigator.push(const WebView());
+                                  } else if (currentTab == 1) {
+                                    widget.navigator.push(const CameraPicker(
+                                      maximumRecordingDuration: Duration(seconds: 15),
+                                    ));
+                                  }
+                                },
+                                icon: Icon(icon[index])))),
                     padding: EdgeInsets.zero,
                     indicatorSize: TabBarIndicatorSize.label,
                     tabAlignment: TabAlignment.start,
@@ -77,9 +91,9 @@ class _SubStepItemState extends State<SubStepItem> with SingleTickerProviderStat
                   )),
                   IconButton(
                     onPressed: () {
-                      if(currentTab < tabController.length-1){
-                        currentTab++;
-                        tabController.animateTo(currentTab, duration: Duration(milliseconds: 250),curve: Curves.easeIn );
+                      if (currentTab < tabController.length - 1) {
+                        ++currentTab;
+                        tabController.animateTo(currentTab, duration: Duration(milliseconds: 250), curve: Curves.easeIn);
                       }
                     },
                     icon: Icon(Icons.arrow_forward_ios),

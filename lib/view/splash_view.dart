@@ -17,8 +17,8 @@ class SplashViewState extends State<SplashView> {
 
   @override
   void initState() {
-   Future.delayed(Duration(seconds: 4), (){
-     widget.navigator.pushNamed(RouteManager.home);
+   Future.delayed(const Duration(seconds: 4), (){
+     widget.navigator.pushNamedAndRemoveUntil(RouteManager.home);
    });
     super.initState();
   }

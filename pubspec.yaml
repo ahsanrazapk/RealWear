@@ -44,6 +44,8 @@ dependencies:
   speech_to_text: ^6.6.1
   camera: ^0.10.5+9
   video_player: ^2.8.6
+  flutter_inappwebview: ^5.8.0
+
 
 
 dev_dependencies:
