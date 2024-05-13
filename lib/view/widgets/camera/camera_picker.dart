@@ -131,7 +131,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       cameraQuarterTurns = orientation.index + 1;
       return cameraQuarterTurns;
     } else if (orientation == DeviceOrientation.landscapeLeft) {
-      cameraQuarterTurns = platformType == PlatformType.realwear ? orientation.index + 3 : orientation.index - 1;
+      cameraQuarterTurns = platformType == PlatformType.realwear ? orientation.index : orientation.index - 1;
       return cameraQuarterTurns;
     }
     cameraQuarterTurns = orientation.index;
@@ -548,8 +548,11 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
     const Size outerSize = Size.square(115);
     const Size innerSize = Size.square(82);
     return Semantics(
+      label: isShootingButtonAnimate? 'hf_no_number:|hf_commands:stop|hf_commands:stop recording|':'hf_no_number:|hf_commands:record|hf_commands:record video|',
+      onTap: () => isShootingButtonAnimate ? recordDetectionCancel(constraints) : recordDetection(constraints),
+
       button: true,
-      customSemanticsActions: {
+     /* customSemanticsActions: {
         const CustomSemanticsAction(label: 'hf_no_number:|hf_commands:record|hf_commands:record video|'): () {
           if (!isShootingButtonAnimate) {
             recordDetection(constraints);
@@ -565,7 +568,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
             recordDetectionCancel(constraints);
           }
         }
-      },
+      },*/
       child: Listener(
         behavior: HitTestBehavior.opaque,
         /*  onPointerUp: enableRecording
@@ -576,14 +579,14 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
         onPointerMove: enablePullToZoomInRecord ? (PointerMoveEvent e) => onShootingButtonMove(e, constraints) : null,
         child: InkWell(
           borderRadius: const BorderRadius.all(Radius.circular(999999)),
-          onTap: () => isShootingButtonAnimate ? recordDetectionCancel(constraints) : takePicture(),
-          onLongPress: enableRecording
+          onTap: () => isShootingButtonAnimate ? recordDetectionCancel(constraints) : recordDetection(constraints),
+        /*  onLongPress: enableRecording
               ? () {
                   if (!isShootingButtonAnimate) {
                     recordDetection(constraints);
                   }
                 }
-              : null,
+              : null,*/
           child: SizedBox.fromSize(
             size: outerSize,
             child: Stack(
