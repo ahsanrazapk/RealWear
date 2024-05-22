@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 import  'dart:io' if (dart.library.html) 'dart:html';
 import 'dart:math' as math;
 import 'package:camera/camera.dart';
@@ -392,14 +393,16 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   Future<void> takePicture() async {
     if (controller!.value.isInitialized && !controller!.value.isTakingPicture) {
       controller?.takePicture().then((value) async {
-       /* final dynamic entity = await CameraPickerViewer.pushToViewer(
-          context,
-          pickerState: this,
-          pickerType: CameraPickerViewType.image,
-          previewXFile: File((await controller!.takePicture()).path),
-          shouldDeletePreviewFile: shouldDeletePreviewFile,
-          turns: cameraQuarterTurns,
-        );*/
+     /*   if(platformType.isMobile) {
+          final dynamic entity = await CameraPickerViewer.pushToViewer(
+            context,
+            pickerState: this,
+            pickerType: CameraPickerViewType.image,
+            previewXFile: File((await controller!.takePicture()).path),
+            shouldDeletePreviewFile: shouldDeletePreviewFile,
+            turns: cameraQuarterTurns,
+          );
+        }*/
       }).catchError((Object e) {
         initCameras();
         throw e;
@@ -465,12 +468,16 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       controller?.stopVideoRecording().then((XFile xFile) async {
         controller?.setFlashMode(FlashMode.auto);
         final nav = Navigator.of(context);
-  /*      final dynamic entity = await CameraPickerViewer.pushToViewer(context,
-            pickerState: this,
-            pickerType: CameraPickerViewType.video,
-            previewXFile: File(xFile.path),
-            shouldDeletePreviewFile: shouldDeletePreviewFile,
-            turns: cameraQuarterTurns);*/
+        if(!platformType.isWeb){
+          final dynamic entity = await CameraPickerViewer.pushToViewer(context,
+              pickerState: this,
+              pickerType: CameraPickerViewType.video,
+              previewXFile: xFile.path,
+              shouldDeletePreviewFile: shouldDeletePreviewFile,
+              turns: cameraQuarterTurns);
+        }else{
+
+        }
       }).catchError((Object e) {
         initCameras();
         _handleError();

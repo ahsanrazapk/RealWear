@@ -98,13 +98,16 @@ extension ClickableExtension on Widget {
       bool opaque = true,
       GestureTapDownCallback? onTapDown,
       GestureDragUpdateCallback? verticalDrag}) {
-    return GestureDetector(
-      key: key,
-      behavior: opaque ? HitTestBehavior.opaque : HitTestBehavior.deferToChild,
-      onTap: onTap,
-      onTapDown: onTapDown,
-      onVerticalDragUpdate: verticalDrag,
-      child: this,
+    return Semantics(
+      label: 'hf_no_number:|',
+      child: GestureDetector(
+        key: key,
+        behavior: opaque ? HitTestBehavior.opaque : HitTestBehavior.deferToChild,
+        onTap: onTap,
+        onTapDown: onTapDown,
+        onVerticalDragUpdate: verticalDrag,
+        child: this,
+      ),
     );
   }
 }

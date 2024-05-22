@@ -35,7 +35,7 @@ class CameraPickerViewer extends StatefulWidget {
     BuildContext context, {
     CameraPickerState? pickerState,
     required CameraPickerViewType pickerType,
-    required File previewXFile,
+    required String previewXFile,
     required int turns,
     bool shouldDeletePreviewFile = false,
   }) {
@@ -44,7 +44,7 @@ class CameraPickerViewer extends StatefulWidget {
         pageBuilder: (_, __, ___) => CameraPickerViewer(
           pickerState: pickerState,
           pickerType: pickerType,
-          previewXFile: previewXFile,
+          previewXFile: File(previewXFile),
           turns: turns,
           shouldDeletePreviewFile: shouldDeletePreviewFile,
         ),

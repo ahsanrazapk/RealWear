@@ -7,6 +7,10 @@ extension PT on PlatformType{
   bool get isIOS => this == PlatformType.ios;
 
   bool get isAndroid => this == PlatformType.android;
+
+  bool get isMobile => this == PlatformType.android || this == PlatformType.ios;
+
+  bool get isWeb => kIsWeb;
 }
 
 
