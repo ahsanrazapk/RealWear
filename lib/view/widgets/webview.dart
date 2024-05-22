@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:wfveflutterexample/application/app_theme/color_scheme.dart';
 
@@ -46,12 +44,7 @@ class WebViewState extends State<WebView> {
                   decoration:
                   BoxDecoration(border: Border.all(color: ColorManager.primary)),
                   child: InAppWebView(
-                    initialUrlRequest: URLRequest(url: Uri.tryParse("https://dev-app.dropslab.com//#/threed?urn=dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6NzM2YzJjNGQtOWNiNy00M2IyLWExYTItNDM3YmRhMWE0OWM1eGpoNGUvTG93cG9seV90cmVlX3NhbXBsZS5vYmo&token=t4pvLXdHAn7_Dlf-OvOsErCpv5FfXLcp32i8M00FYX46YLom_jALHOMlimKab6oKI2hjCbxxoJzoy1QFU2htHcAedwrq-9D4MRpTBTZnGvFXaKhfZufrn07lG75E7AGfsgCcIHPJ8IKzXrgYy3CFyXG7PYWweSVMPDt_nyy_G4on92ki80VIbFHY2Kmvn88fmSShYKBk2T38wJCMBmXUGOAsOfzUihuqlflaUVXPw6HwYy80vjpMeAqDDPSJRzIImKPXEMQR0j7bwgbl6CMaWMV3c2N_NahIQsDSjS1Ns02scSo6sen3QNqER-sdoUPFRc97EdqxNi66JhrI7_p7D2IvCK2sIWd9cor-w5X2v0l0CKn7w_k75xuJwdC-kaFvBkHWT4gecbiGH-C-Q7k5FUlJ8KZcQaTWM_rUhQojTDRv1PPddr4tXxyXNrEu6b4IDc8U-wdG1DHJGZ-ku4WnjCj4FicfTxxaZm63a_4pdhAfKhJp6DJFcEf5LFYqOhhHqWLcs0OekX_9twM0KsylyBepZDS9agtkviGZC76v-HAOKpZ8saiQp3nydn3_jHHhbrVqyb5oi9Zk0L1-Ms1d8-z4i1qbN0zN6bgHFbGx16Kor5ZVfxkgJcy-jrzL1p1U")),
-                    initialOptions: InAppWebViewGroupOptions(
-                        crossPlatform: InAppWebViewOptions(),
-                      android: AndroidInAppWebViewOptions(),
-                      ios: IOSInAppWebViewOptions()
-                    ),
+                    initialUrlRequest: URLRequest(url: WebUri("https://dev-app.dropslab.com//#/threed?urn=dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6NzM2YzJjNGQtOWNiNy00M2IyLWExYTItNDM3YmRhMWE0OWM1eGpoNGUvTG93cG9seV90cmVlX3NhbXBsZS5vYmo&token=t4pvLXdHAn7_Dlf-OvOsErCpv5FfXLcp32i8M00FYX46YLom_jALHOMlimKab6oKI2hjCbxxoJzoy1QFU2htHcAedwrq-9D4MRpTBTZnGvFXaKhfZufrn07lG75E7AGfsgCcIHPJ8IKzXrgYy3CFyXG7PYWweSVMPDt_nyy_G4on92ki80VIbFHY2Kmvn88fmSShYKBk2T38wJCMBmXUGOAsOfzUihuqlflaUVXPw6HwYy80vjpMeAqDDPSJRzIImKPXEMQR0j7bwgbl6CMaWMV3c2N_NahIQsDSjS1Ns02scSo6sen3QNqER-sdoUPFRc97EdqxNi66JhrI7_p7D2IvCK2sIWd9cor-w5X2v0l0CKn7w_k75xuJwdC-kaFvBkHWT4gecbiGH-C-Q7k5FUlJ8KZcQaTWM_rUhQojTDRv1PPddr4tXxyXNrEu6b4IDc8U-wdG1DHJGZ-ku4WnjCj4FicfTxxaZm63a_4pdhAfKhJp6DJFcEf5LFYqOhhHqWLcs0OekX_9twM0KsylyBepZDS9agtkviGZC76v-HAOKpZ8saiQp3nydn3_jHHhbrVqyb5oi9Zk0L1-Ms1d8-z4i1qbN0zN6bgHFbGx16Kor5ZVfxkgJcy-jrzL1p1U")),
                     onWebViewCreated: (InAppWebViewController controller) {
                       _webViewController = controller;
                     },

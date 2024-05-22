@@ -41,10 +41,12 @@ dependencies:
   device_info_plus: ^10.1.0
   stack_trace: ^1.11.1
   flutter_svg: ^2.0.10+1
-  speech_to_text: ^6.6.1
+  speech_to_text: any
   camera: ^0.10.5+9
   video_player: ^2.8.6
-  flutter_inappwebview: ^5.8.0
+  flutter_inappwebview: ^6.0.0
+  flutter_inappwebview_web: ^1.0.8
+  image: ^4.1.7
 
 
 

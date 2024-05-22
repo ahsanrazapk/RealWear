@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:io';
+import  'dart:io' if (dart.library.html) 'dart:html';
 import 'dart:math' as math;
 import 'package:camera/camera.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:wfveflutterexample/application/app_theme/color_scheme.dart';
 import 'package:wfveflutterexample/application/core/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import 'package:wfveflutterexample/main.dart';
 import 'camera_picker_viewer.dart';
 import 'circular_progress_bar.dart';
 import 'exposure_point_widget.dart';
+import 'package:image/image.dart' as img;
 
 const Color _lockedColor = Colors.amber;
 const Duration _kRouteDuration = Duration(milliseconds: 300);
@@ -67,7 +67,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
 
   bool get enableAudio => enableRecording;
 
-  bool get shouldPrepareForVideoRecording => enableRecording && enableAudio && Platform.isIOS;
+  bool get shouldPrepareForVideoRecording => enableRecording && enableAudio && platformType.isIOS;
 
   bool get enableSetExposure => _enableSetExposure;
 
@@ -88,7 +88,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    if (!Platform.isAndroid) {
+    if (platformType.isAndroid) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: <SystemUiOverlay>[]);
     }
     if (mounted) {
@@ -99,7 +99,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   @override
   Future<void> dispose() async {
     super.dispose();
-    if (!Platform.isAndroid) {
+    if (platformType.isAndroid) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     }
     WidgetsBinding.instance.removeObserver(this);
@@ -150,8 +150,44 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
     }
   }
 
+  int uvPixelIndex(int x, int y, int width) {
+    int uvWidth = width ~/ 2;
+    int uvHeight = y ~/ 2;
+    return uvHeight * uvWidth + (x ~/ 2);
+  }
+
+  Uint8List? convertYUV420toImageColor(CameraImage cameraImage) {
+    try {
+      final int width = cameraImage.width;
+      final int height = cameraImage.height;
+      final img.Image image = img.Image(width: width, height: height);
+
+      for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+          final int uvIndex = uvPixelIndex(x, y, width);
+          final int index = y * width + x;
+          final Y = cameraImage.planes[0].bytes[index];
+          final U = cameraImage.planes[1].bytes[uvIndex] - 128;
+          final V = cameraImage.planes[2].bytes[uvIndex] - 128;
+
+          int r = (Y + V * 1436 / 1024 - 179).round().clamp(0, 255);
+          int g = (Y - U * 46549 / 131072 + 44 - V * 93604 / 131072 + 91).round().clamp(0, 255);
+          int b = (Y + U * 1814 / 1024 - 227).round().clamp(0, 255);
+
+          image.setPixelRgba(x, y, r, g, b, 225);
+        }
+      }
+      final Uint8List pngBytes = img.encodePng(image);
+      return pngBytes;
+    } catch (e) {
+      return null;
+    }
+  }
+
   void initCameras([CameraDescription? cameraDescription]) {
     final CameraController? _c = _controllerNotifier.value;
+
+
 
     setState(() {
       _maxAvailableZoom = 1;
@@ -182,7 +218,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
         cameraDescription ?? cameras?[0] ?? (await availableCameras())[0],
         widget.resolutionPreset,
         enableAudio: enableAudio,
-        imageFormatGroup: Platform.isIOS ? ImageFormatGroup.yuv420 : ImageFormatGroup.jpeg,
+        imageFormatGroup: platformType.isIOS ? ImageFormatGroup.yuv420 : ImageFormatGroup.jpeg,
       )..addListener(() {
 /*
           if (controller.value.hasError) {
@@ -207,6 +243,13 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       } finally {
         setState(() {});
       }
+    });
+
+  }
+
+  camStream(){
+    controller?.startImageStream((image) {
+     Uint8List? uint8list = convertYUV420toImageColor(image);
     });
   }
 
@@ -349,14 +392,14 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   Future<void> takePicture() async {
     if (controller!.value.isInitialized && !controller!.value.isTakingPicture) {
       controller?.takePicture().then((value) async {
-        final dynamic entity = await CameraPickerViewer.pushToViewer(
+       /* final dynamic entity = await CameraPickerViewer.pushToViewer(
           context,
           pickerState: this,
           pickerType: CameraPickerViewType.image,
           previewXFile: File((await controller!.takePicture()).path),
           shouldDeletePreviewFile: shouldDeletePreviewFile,
           turns: cameraQuarterTurns,
-        );
+        );*/
       }).catchError((Object e) {
         initCameras();
         throw e;
@@ -422,12 +465,12 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
       controller?.stopVideoRecording().then((XFile xFile) async {
         controller?.setFlashMode(FlashMode.auto);
         final nav = Navigator.of(context);
-        final dynamic entity = await CameraPickerViewer.pushToViewer(context,
+  /*      final dynamic entity = await CameraPickerViewer.pushToViewer(context,
             pickerState: this,
             pickerType: CameraPickerViewType.video,
             previewXFile: File(xFile.path),
             shouldDeletePreviewFile: shouldDeletePreviewFile,
-            turns: cameraQuarterTurns);
+            turns: cameraQuarterTurns);*/
       }).catchError((Object e) {
         initCameras();
         _handleError();
@@ -462,7 +505,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
   Widget get switchCamerasButton {
     return IconButton(
       onPressed: switchCameras,
-      icon: Icon(Platform.isIOS ? Icons.flip_camera_ios_outlined : Icons.flip_camera_ios_outlined, size: 28, color: Colors.white),
+      icon: const Icon(Icons.flip_camera_ios_outlined, size: 28, color: Colors.white),
     );
   }
 
@@ -548,11 +591,12 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
     const Size outerSize = Size.square(115);
     const Size innerSize = Size.square(82);
     return Semantics(
-      label: isShootingButtonAnimate? 'hf_no_number:|hf_commands:stop|hf_commands:stop recording|':'hf_no_number:|hf_commands:record|hf_commands:record video|',
+      label: isShootingButtonAnimate
+          ? 'hf_no_number:|hf_commands:stop|hf_commands:stop recording|'
+          : 'hf_no_number:|hf_commands:record|hf_commands:record video|',
       onTap: () => isShootingButtonAnimate ? recordDetectionCancel(constraints) : recordDetection(constraints),
-
       button: true,
-     /* customSemanticsActions: {
+      /* customSemanticsActions: {
         const CustomSemanticsAction(label: 'hf_no_number:|hf_commands:record|hf_commands:record video|'): () {
           if (!isShootingButtonAnimate) {
             recordDetection(constraints);
@@ -580,7 +624,7 @@ class CameraPickerState extends State<CameraPicker> with WidgetsBindingObserver 
         child: InkWell(
           borderRadius: const BorderRadius.all(Radius.circular(999999)),
           onTap: () => isShootingButtonAnimate ? recordDetectionCancel(constraints) : recordDetection(constraints),
-        /*  onLongPress: enableRecording
+          /*  onLongPress: enableRecording
               ? () {
                   if (!isShootingButtonAnimate) {
                     recordDetection(constraints);

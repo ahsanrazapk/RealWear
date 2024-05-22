@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +8,7 @@ import 'package:wfveflutterexample/application/main_config.dart';
 import 'package:wfveflutterexample/application/routes/route_generator.dart';
 import 'package:wfveflutterexample/base/base_widget.dart';
 import 'package:wfveflutterexample/common/verification_type.dart';
+
 late PlatformType platformType;
 
 void setPreferredOrientations(PlatformType platformType) {
@@ -28,6 +28,7 @@ void setPreferredOrientations(PlatformType platformType) {
     }
   }
 }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark
@@ -35,6 +36,7 @@ Future<void> main() async {
   await initMainServiceLocator();
   platformType = await getPlatformType();
   setPreferredOrientations(platformType);
+
   runApp(MyApp(
     platformType: platformType,
   ));
@@ -46,7 +48,7 @@ class MyApp extends BaseStateLessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-            title: "Final Round",
+            title: "Dropslab",
             scrollBehavior: MyBehavior(),
             theme: lightTheme,
             debugShowCheckedModeBanner: false,
